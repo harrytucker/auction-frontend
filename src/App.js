@@ -15,11 +15,36 @@ import { from } from 'rxjs';
 class BidTable extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {}
+    this.state = { value: 1 }
+
+    this.handleChange = this.handleChange.bind(this)
   }
 
   componentDidMount() {
-    fetch('http://0.0.0.0:61125/api/v1/bids/21')
+    fetch('http://0.0.0.0:61125/api/v1/bids/1')
+      .then(results => {
+        return results.json()
+      }).then(data => {
+        let bids = data.map((bid) => {
+          return (
+            <tr>
+              <td>{bid.bidder_name}</td>
+              <td>£{bid.bid_amount}</td>
+            </tr>
+          )
+        })
+
+        this.setState({ bids: bids })
+        console.log("state", this.state.bids)
+      })
+  }
+
+  handleChange(event) {
+    this.state.value = event.target.value
+
+    // construct API url
+    let api_url = 'http://0.0.0.0:61125/api/v1/bids/' + this.state.value
+    fetch(api_url)
       .then(results => {
         return results.json()
       }).then(data => {
@@ -39,17 +64,24 @@ class BidTable extends React.Component {
 
   render() {
     return (
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Bidder</th>
-            <th>Bid Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          {this.state.bids}
-        </tbody>
-      </Table>
+      <div>
+        <Form>
+          <Form.Label>Item Number</Form.Label>
+          <Form.Control onChange={this.handleChange} name="value" value={this.state.value} type="number" placeholder="My Name" required="true"></Form.Control>
+          <Form.Text className="text-muted">View bids for an item</Form.Text>
+        </Form>
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>Bidder</th>
+              <th>Bid Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.state.bids}
+          </tbody>
+        </Table>
+      </div>
     )
   }
 }
