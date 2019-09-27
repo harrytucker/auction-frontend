@@ -6,6 +6,11 @@
   height: 40vmin;
 }
 
+.navbar-brand {
+  font-size: 16pt;
+  font-weight: bold;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
